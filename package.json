@@ -1,7 +1,7 @@
 {
     "name": "gen",
     "version": "1.0.0",
-    "description": "",
+    "description": "A code generation utility",
     "main": "lib/index.js",
     "scripts": {
         "test": "jest --notify --watch",
@@ -36,7 +36,7 @@
     },
     "jest": {
         "modulePathIgnorePatterns": [
-            "<rootDir>/scripts/"
+            "<rootDir>/templates/"
         ]
     }
 }
