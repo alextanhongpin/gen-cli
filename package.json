@@ -6,7 +6,7 @@
     "scripts": {
         "test": "jest --notify --watch",
         "exec": "npm i -g && gen",
-        "build": "npx babel src --out-dir lib --watch"
+        "build": "npx babel src --out-dir lib --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\" --watch"
     },
     "bin": {
         "gen": "lib/index.js"

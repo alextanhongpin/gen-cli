@@ -2,10 +2,11 @@
 
 import chalk from "chalk";
 import clear from "clear";
+import commander from "commander";
 import figlet from "figlet";
 import path from "path";
-import commander from "commander";
-import gen from "./gen.js";
+
+import { gen } from "./gen.js";
 
 const { program } = commander;
 

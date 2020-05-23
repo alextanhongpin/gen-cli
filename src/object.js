@@ -2,11 +2,10 @@ export const isObject = o => o === Object(o) && !Array.isArray(o);
 
 export const isArray = arr => Array.isArray(arr);
 
-export const mergeObject = (o = {}, ...rest) => {
+export const mergeObject = (o = {}, ...objects) => {
   const tgt = { ...o };
-  if (!rest.length) return tgt;
-
-  const src = rest.shift();
+  if (!objects.length) return tgt;
+  const [src, ...rest] = objects;
   for (const key in src) {
     if (isObject(tgt[key]) && isObject(src[key])) {
       tgt[key] = mergeObject(tgt[key], src[key]);

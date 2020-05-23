@@ -1,72 +1,72 @@
-import fs from "fs";
 import chalk from "chalk";
-import path from "path";
 import treeify from "treeify";
 import inquirer from "inquirer";
+import path from "path";
 
-import { mergeObject, isObject, toObject } from "./helper.js";
-import Handlebars from "./template.js";
+import handlebars from "./template.js";
+import { open, load, ext } from "./file";
+import { mergeObject, isObject, toObject } from "./object.js";
 
-const fsPromises = fs.promises;
-
-const utf8 = { encoding: "utf8" };
-
-const cwd = (...paths) => path.resolve(process.cwd(), ...paths);
+const UTF8 = { encoding: "utf8" };
 
 const FileStatus = {
   CREATED: chalk.green("(created)"),
   EXISTS: chalk.red("(exists)")
 };
 
-async function open(target, flag = "w+") {
-  const [dir, file] = [path.dirname, path.basename].map(fn => fn(target));
-  await fsPromises.mkdir(cwd(dir), {
-    recursive: true
-  });
-  const fileHandle = await fsPromises.open(cwd(dir, file), flag);
-  return fileHandle;
-}
+export const gen = async (configPath = "config.json", commandType, name) => {
+  const config = load(configPath);
 
-async function gen(configPath = "config.json", commandType, name) {
-  const config = require(cwd(configPath));
+  // Allow extending of handlebars if a config.js file is loaded.
+  switch (ext(configPath)) {
+    case ".js":
+      if (config.handlebars && typeof config.handlebars === "function") {
+        config.handlebars(handlebars);
+      }
+      delete config.handlebars;
+      break;
+    default:
+  }
+
   const command = config[commandType];
   if (!command)
     throw new Error(
-      `Command "${commandType} is not specified in the config.json"`
+      `Command "${commandType} is not specified in the ${configPath}"`
     );
 
   const { prompts, actions } = command;
 
   const answers = prompts ? await inquirer.prompt(prompts) : {};
 
-  let templateTree = {};
-  let destinationTree = {};
-  // Payload data.
+  const templateStatus = {};
+  const destinationStatus = {};
 
   for (const action of actions) {
-    const data = { name, command: commandType, ...answers, ...action.data };
+    const data = {
+      name,
+      command: commandType,
+      ...answers,
+      ...action.data
+    };
+
     let template;
     let destination;
     let content = "";
 
-    const templatePath = Handlebars.compile(action.template)(data);
-    const templatePaths = templatePath.split("/");
-
-    const destinationPath = Handlebars.compile(action.destination)(data);
-    const destinationPaths = destinationPath.split("/");
+    // Read from template and write to destination.
+    const templatePath = handlebars.compile(action.template)(data);
+    const destinationPath = handlebars.compile(action.destination)(data);
 
     try {
       template = await open(templatePath, "a+");
-      content = await template.readFile(utf8);
-
-      templatePaths.push(
-        content.length ? FileStatus.CREATED : FileStatus.EXISTS
-      );
+      content = await template.readFile(UTF8);
+      templateStatus[templatePath] = content.length
+        ? FileStatus.CREATED
+        : FileStatus.EXISTS;
     } catch (error) {
-      templatePaths.push(chalk.red("(exists)"));
+      templateStatus[templatePath] = FileStatus.EXISTS;
     } finally {
       template?.close();
-      templateTree = mergeObject(templateTree, toObject(templatePaths));
     }
 
     if (!content.trim().length) {
@@ -75,30 +75,30 @@ async function gen(configPath = "config.json", commandType, name) {
 
     try {
       destination = await open(destinationPath, "wx+");
-      await destination.writeFile(Handlebars.compile(content)(data), utf8);
+      await destination.writeFile(handlebars.compile(content)(data), UTF8);
 
-      destinationPaths.push(FileStatus.CREATED);
+      destinationStatus[destinationPath] = FileStatus.CREATED;
     } catch (error) {
-      destinationPaths.push(FileStatus.EXISTS);
+      destinationStatus[destinationPath] = FileStatus.EXISTS;
     } finally {
       destination?.close();
-      destinationTree = mergeObject(
-        destinationTree,
-        toObject(destinationPaths)
-      );
     }
   }
 
-  printTree(templateTree, "Generated templates");
-  printTree(destinationTree, "Generated codes");
-}
+  printTree(templateStatus, "Generated templates");
+  printTree(destinationStatus, "Generated codes");
+};
 
-function printTree(tree = {}, msg = "") {
-  if (!isObject(tree)) return;
-  if (Object.keys(tree).length) {
-    console.log(chalk.blue(msg));
-    console.log(treeify.asTree(tree, true));
+function printTree(obj = {}, msg = "") {
+  if (!isObject(obj)) return;
+  if (!Object.keys(obj).length) return;
+
+  let tree = {};
+  for (const key in obj) {
+    const paths = key.split(path.sep);
+    const status = obj[key];
+    tree = mergeObject(tree, toObject(paths.concat(status)));
   }
+  console.log(chalk.blue(msg));
+  console.log(treeify.asTree(tree, true));
 }
-
-export default gen;

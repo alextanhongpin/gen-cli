@@ -1,4 +1,4 @@
-import { mergeObject } from "./helper";
+import { mergeObject } from "./object";
 
 describe("mergeObject", () => {
   it("merges two objects", () => {
