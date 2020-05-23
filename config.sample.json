@@ -1,0 +1,38 @@
+{
+    "controller": {
+        "description": "Generates a controller",
+        "prompts": [{
+            "type": "input",
+            "name": "name",
+            "message": "Enter a name"
+        }, {
+            "type": "password",
+            "name": "password",
+            "message": "Enter a password"
+        }],
+        "actions": [{
+            "description": "Create controller",
+            "template": "templates/{{command}}/index.js",
+            "destination": "{{kebabCase name}}/{{command}}/index.js",
+            "data": {
+                "msg": "static data can be passed in"
+            }
+        }, {
+            "description": "Create controller",
+            "template": "templates/{{command}}/index.spec.js",
+            "destination": "{{kebabCase name}}/{{command}}/index.spec.js"
+        }]
+    },
+    "service": {
+        "name": "service",
+        "actions": [{
+            "name": "Create a service",
+            "template": "templates/{{command}}.js",
+            "destination": "{{kebabCase name}}/service/index.js"
+        }, {
+            "name": "Create a service test",
+            "template": "templates/{{command}}.spec.js",
+            "destination": "{{kebabCase name}}/service/index.spec.js"
+        }]
+    }
+}
