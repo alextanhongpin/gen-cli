@@ -3,10 +3,10 @@
     "version": "1.0.0",
     "description": "",
     "main": "lib/index.js",
-    "type": "module",
     "scripts": {
-        "test": "jest",
-        "exec": "npm i -g && gen"
+        "test": "jest --notify --watch",
+        "exec": "npm i -g && gen",
+        "build": "npx babel src --out-dir lib --watch"
     },
     "bin": {
         "gen": "lib/index.js"
@@ -24,7 +24,15 @@
         "treeify": "^1.1.0"
     },
     "devDependencies": {
-        "jest": "^26.0.1"
+        "@babel/cli": "^7.8.4",
+        "@babel/core": "^7.9.6",
+        "@babel/node": "^7.8.7",
+        "@babel/plugin-transform-runtime": "^7.9.6",
+        "@babel/preset-env": "^7.9.6",
+        "babel-jest": "^26.0.1",
+        "core-js": "^3.6.5",
+        "jest": "^26.0.1",
+        "rimraf": "^3.0.2"
     },
     "jest": {
         "modulePathIgnorePatterns": [
