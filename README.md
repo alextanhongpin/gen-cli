@@ -5,6 +5,7 @@ Code generation with js.
 ## Configuration
 
 Example `config.json` that contains two commands, `controller` and `service`. Calling `$ gen g controller foo` will then create the template files first if it doesn't exist, and then the destination files.
+
 ```json
 {
     "controller": {
@@ -19,30 +20,29 @@ Example `config.json` that contains two commands, `controller` and `service`. Ca
             "message": "Enter a password"
         }],
         "actions": [{
-                "description": "Create controller",
-                "template": "templates/{{kebabCase command}}/index.js",
-                "destination": "{{name}}/{{kebabCase command}}/index.js",
-                "data": {
-                    "msg": "static data can be passed in"
-                }
-            }, {
-                "description": "Create controller",
-                "template": "templates/{{kebabCase command}}/index.spec.js",
-                "destination": "{{name}}/{{kebabCase command}}/index.spec.js"
+            "description": "Create controller",
+            "template": "templates/{{command}}/index.js",
+            "destination": "{{kebabCase name}}/{{command}}/index.js",
+            "data": {
+                "msg": "static data can be passed in"
             }
-        },
-        "service": {
-            "name": "service",
-            "actions": [{
-                "name": "Create a service",
-                "template": "templates/{{command}}.js",
-                "destination": "{{name}}/service/index.js"
-            }, {
-                "name": "Create a service test",
-                "template": "templates/{{command}}.spec.js",
-                "destination": "{{name}}/service/index.spec.js"
-            }]
-        }
+        }, {
+            "description": "Create controller",
+            "template": "templates/{{command}}/index.spec.js",
+            "destination": "{{kebabCase name}}/{{command}}/index.spec.js"
+        }]
+    },
+    "service": {
+        "name": "service",
+        "actions": [{
+            "name": "Create a service",
+            "template": "templates/{{command}}.js",
+            "destination": "{{kebabCase name}}/service/index.js"
+        }, {
+            "name": "Create a service test",
+            "template": "templates/{{command}}.spec.js",
+            "destination": "{{kebabCase name}}/service/index.spec.js"
+        }]
     }
 }
 ```
