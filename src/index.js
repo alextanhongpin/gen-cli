@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require("json5/lib/register");
 
 import chalk from "chalk";
 import clear from "clear";
@@ -6,7 +7,7 @@ import commander from "commander";
 import figlet from "figlet";
 import path from "path";
 
-import { gen } from "./gen.js";
+import { gen, createConfig } from "./gen.js";
 
 const { program } = commander;
 
@@ -18,16 +19,36 @@ console.log(
 program
   .version("0.0.1")
   .description("Code generation for JavaScript")
-  .option("-c, --config <type>", "Path to config file");
+  .option("-c, --config <type>", "Path to config file")
+  .option("-d, --dry-run", "Print out template instead of writing to file");
 
 program
   .command("g <type> <name>")
   .description("generates the file for the given type")
-  .action(function(type, name) {
+  .action(async (type, name) => {
     try {
-      gen(program.config, type, name);
+      await gen(program, type, name);
     } catch (error) {
       console.log(chalk.red(error.message));
+    }
+  });
+
+program
+  .command("init")
+  .description("generate sample config file")
+  .action(async () => {
+    try {
+      await createConfig();
+      console.log(chalk.green("created config.json"));
+      console.log(
+        chalk.blue(
+          "Run '$ gen g my_service MyService' to generate your first template!"
+        )
+      );
+    } catch (error) {
+      error.code === "EEXIST"
+        ? console.log(chalk.red("config.json already exists"))
+        : console.log(chalk.red(error.message));
     }
   });
 

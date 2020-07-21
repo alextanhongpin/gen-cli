@@ -1,8 +1,7 @@
-import { toKebabCase, toCamelCase, toSnakeCase, toPascalCase } from "./naming";
-import { toObject } from "./helper";
+import { toKebab, toCamel, toSnake, toPascal } from "./naming";
 
 describe("naming strategy", () => {
-  describe("toSnakeCase", () => {
+  describe("toSnake", () => {
     it("converts the text to snake case", () => {
       const tests = [
         ["foo bar", "foo_bar"],
@@ -10,27 +9,28 @@ describe("naming strategy", () => {
         ["FOO BAR", "foo_bar"]
       ];
       for (let [input, expected] of tests) {
-        expect(toSnakeCase(input)).toEqual(expected);
+        expect(toSnake(input)).toEqual(expected);
       }
     });
   });
 
-  describe("toCamelCase", () => {
+  describe("toCamel", () => {
     it("converts the text to camel case", () => {
       const tests = [
         ["foo", "foo"],
         ["foo bar", "fooBar"],
         ["foo-bar", "fooBar"],
-        ["foo bAR", "fooBar"],
-        ["FOO BAR", "fooBar"]
+        ["foo bAR", "fooBAR"],
+        ["FOO BAR", "fOOBAR"],
+        ["FooBar", "fooBar"]
       ];
       for (const [input, expected] of tests) {
-        expect(toCamelCase(input)).toEqual(expected);
+        expect(toCamel(input)).toEqual(expected);
       }
     });
   });
 
-  describe("toKebabCase", () => {
+  describe("toKebab", () => {
     it("converts the text to kebab case", () => {
       const tests = [
         ["foo", "foo"],
@@ -40,12 +40,12 @@ describe("naming strategy", () => {
         ["FOO BAR", "foo-bar"]
       ];
       for (const [input, expected] of tests) {
-        expect(toKebabCase(input)).toEqual(expected);
+        expect(toKebab(input)).toEqual(expected);
       }
     });
   });
 
-  describe("toPascalCase", () => {
+  describe("toPascal", () => {
     it("converts the text to pascal case", () => {
       const tests = [
         ["foo", "Foo"],
@@ -56,18 +56,7 @@ describe("naming strategy", () => {
         ["FooBar", "FooBar"]
       ];
       for (const [input, expected] of tests) {
-        expect(toPascalCase(input)).toEqual(expected);
-      }
-    });
-  });
-
-  it("concatenates the keys as object", () => {
-    const keys = ["a", "b", "c"];
-    expect(toObject(keys)).toEqual({
-      a: {
-        b: {
-          c: undefined
-        }
+        expect(toPascal(input)).toEqual(expected);
       }
     });
   });

@@ -1,0 +1,74 @@
+{
+  "my_controller": {
+    "description": "Generates a controller",
+    "prompts": [
+      {
+        "type": "input",
+        "name": "name",
+        "message": "Enter a name"
+      },
+      {
+        "type": "password",
+        "name": "password",
+        "message": "Enter a password"
+      }
+    ],
+    "actions": [
+      {
+        "description": "Create controller",
+        "template": "templates/{{type}}/index.js",
+        "destination": "{{kebabCase name}}/{{type}}/index.js"
+      },
+      {
+        "description": "Create controller",
+        "template": "templates/{{type}}/index.spec.js",
+        "destination": "{{kebabCase name}}/{{type}}/index.spec.js"
+      }
+    ]
+  },
+  // Each item in an array is a template type.
+  // To invoke them, call gen g <type> <name>,
+  // e.g. gen g my_service User will use this template to create a new user.
+  "my_service": {
+    "description": "creates a service and service test template",
+    // Environment variables can be passed in too when running the code generation.
+    // gen-cli will warn you if any of the values are not passed in.
+    // The keys refers to the mapped variable name, and the value is the
+    // environment variable to get the value from.
+    // e.g. PLURAL=users SINGULAR=user gen g my_service User.
+    "environment": {
+	"pluralName":  "PLURAL",
+	"singularName": "SINGULAR"
+    },
+    // For each template type, we can execute one or more actions, that is we
+    // can generate multiple templates.
+    "actions": [
+      {
+        "description": "Create a service",
+	// The source of the templates, this can be auto-generated too. The "type"
+	// variable refers to the template type, which is "my_service".
+        "template": "templates/{{type}}.hbs",
+	// The destination to write the file to. Note the usage of the handlebars function, kebabCase.
+	// We can optionally use kebabCase, pascalCase, camelCase and snakeCase
+	// to ease conversion of name.
+        "destination": "{{kebabCase name}}/service/index.ts",
+	// Repeating the variables in the template can be cumbersome, here we can provided predefined
+	// variables (think of it as a glossary book) that is constructed from other dynamic data.
+	// Instead of calling {{camelCase name}}Repository in the code multiple times, we can now
+	// call {{repository}} instead.
+	"variables": {
+	  "className": "{{pascalCase name}}",
+	  "classRepository": "{{pascalCase name}}Repository",
+	  "repository": "{{camelCase name}}Repository",
+	  "items": "{{pluralName}}",
+	  "item": "{{singularName}}"
+	}
+      },
+      {
+        "description": "Create a service test",
+        "template": "templates/{{type}}.spec.hbs",
+        "destination": "{{kebabCase name}}/service/index.spec.ts"
+      }
+    ]
+  }
+}

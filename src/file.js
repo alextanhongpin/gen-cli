@@ -5,11 +5,15 @@ const cwd = process.cwd();
 
 export const resolve = (...paths) => path.resolve(cwd, ...paths);
 
-export const open = async (file, flag = "w+") => {
-  await fs.promises.mkdir(resolve(path.dirname(file)), {
+export const folderName = file => resolve(path.dirname(file));
+
+export const createFolder = folder =>
+  fs.promises.mkdir(folder, {
     recursive: true
   });
-  return fs.promises.open(resolve(file), flag);
+
+export const open = async (path, flag = "w+") => {
+  return fs.promises.open(resolve(path), flag);
 };
 
 export const load = file => require(resolve(file));

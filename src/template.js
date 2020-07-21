@@ -1,15 +1,10 @@
 import handlebars from "handlebars";
 
-import {
-  toPascalCase,
-  toKebabCase,
-  toCamelCase,
-  toSnakeCase
-} from "./naming.js";
+import { toPascal, toKebab, toCamel, toSnake } from "./naming.js";
 
-handlebars.registerHelper("pascalCase", toPascalCase);
-handlebars.registerHelper("kebabCase", toKebabCase);
-handlebars.registerHelper("camelCase", toCamelCase);
-handlebars.registerHelper("snakeCase", toSnakeCase);
+handlebars.registerHelper("pascalCase", toPascal);
+handlebars.registerHelper("kebabCase", toKebab);
+handlebars.registerHelper("camelCase", toCamel);
+handlebars.registerHelper("snakeCase", toSnake);
 
 export default handlebars;
