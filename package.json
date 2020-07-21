@@ -1,5 +1,5 @@
 {
-    "name": "gen",
+    "name": "@alex/gen-cli",
     "version": "1.0.0",
     "description": "A code generation utility",
     "main": "lib/index.js",
