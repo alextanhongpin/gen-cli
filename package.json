@@ -1,43 +1,55 @@
 {
-    "name": "@alex/gen-cli",
-    "version": "1.0.0",
-    "description": "A code generation utility",
-    "main": "lib/index.js",
-    "scripts": {
-        "test": "jest --notify --watch",
-        "exec": "npm i -g && gen",
-        "build": "npx babel src --out-dir lib --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\" --watch"
-    },
-    "bin": {
-        "gen": "lib/index.js"
-    },
-    "keywords": [],
-    "author": "alextanhongpin <alextan220990@gmail.com>",
-    "license": "ISC",
-    "dependencies": {
-        "chalk": "^4.1.0",
-        "clear": "^0.1.0",
-        "commander": "^6.0.0",
-        "figlet": "^1.5.0",
-        "handlebars": "^4.7.6",
-        "inquirer": "^7.3.2",
-        "json5": "^2.1.3",
-        "treeify": "^1.1.0"
-    },
-    "devDependencies": {
-        "@babel/cli": "^7.10.5",
-        "@babel/core": "^7.10.5",
-        "@babel/node": "^7.10.5",
-        "@babel/plugin-transform-runtime": "^7.10.5",
-        "@babel/preset-env": "^7.10.4",
-        "babel-jest": "^26.1.0",
-        "core-js": "^3.6.5",
-        "jest": "^26.1.0",
-        "rimraf": "^3.0.2"
-    },
-    "jest": {
-        "modulePathIgnorePatterns": [
-            "<rootDir>/templates/"
-        ]
-    }
+  "name": "@alex/gen-cli",
+  "version": "1.0.0",
+  "description": "A code generation utility",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "jest --notify --watch",
+    "exec": "npm i -g && gen",
+    "build": "npx babel src --out-dir lib --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\" --watch"
+  },
+  "bin": {
+    "gen": "lib/index.js"
+  },
+  "keywords": [],
+  "author": "alextanhongpin <alextan220990@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "clear": "^0.1.0",
+    "commander": "^6.0.0",
+    "figlet": "^1.5.0",
+    "handlebars": "^4.7.6",
+    "inquirer": "^7.3.2",
+    "json5": "^2.1.3",
+    "treeify": "^1.1.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/node": "^7.10.5",
+    "@babel/plugin-transform-runtime": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "babel-jest": "^26.1.0",
+    "core-js": "^3.6.5",
+    "jest": "^26.1.0",
+    "rimraf": "^3.0.2"
+  },
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "<rootDir>/templates/"
+    ]
+  },
+  "directories": {
+    "example": "examples",
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alextanhongpin/gen-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alextanhongpin/gen-cli/issues"
+  },
+  "homepage": "https://github.com/alextanhongpin/gen-cli#readme"
 }
