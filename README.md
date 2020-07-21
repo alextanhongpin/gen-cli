@@ -4,52 +4,16 @@ Code generation with js.
 
 ## Configuration
 
-Example `config.json` that contains two commands, `controller` and `service`. Calling `$ gen g controller foo` will then create the template files first if it doesn't exist, and then the destination files.
+Example `config.json` that contains two commands, `controller` and `service`. Calling `$ gen g controller foo` will then create the template files first if it doesn't exist, and then the destination files. See `config.sample.json5`.
 
-```json
-{
-    "controller": {
-        "description": "Generates a controller",
-        "prompts": [{
-            "type": "input",
-            "name": "name",
-            "message": "Enter a name"
-        }, {
-            "type": "password",
-            "name": "password",
-            "message": "Enter a password"
-        }],
-        "actions": [{
-            "description": "Create controller",
-            "template": "templates/{{command}}/index.js",
-            "destination": "{{kebabCase name}}/{{command}}/index.js",
-            "data": {
-                "msg": "static data can be passed in"
-            }
-        }, {
-            "description": "Create controller",
-            "template": "templates/{{command}}/index.spec.js",
-            "destination": "{{kebabCase name}}/{{command}}/index.spec.js"
-        }]
-    },
-    "service": {
-        "name": "service",
-        "actions": [{
-            "name": "Create a service",
-            "template": "templates/{{command}}.js",
-            "destination": "{{kebabCase name}}/service/index.js"
-        }, {
-            "name": "Create a service test",
-            "template": "templates/{{command}}.spec.js",
-            "destination": "{{kebabCase name}}/service/index.spec.js"
-        }]
-    }
-}
-```
 
 ## Usage
 
 ```bash
+# Initialize config file.
+$ gen init
+
+# Run the template generation.
 $ gen g <type> <name>
 ```
 
@@ -60,9 +24,9 @@ Uses `handlebar.js` because it allows us to register helpers.
 
 ## TODO
 
-[ ] read config from package.json, "gen"
-[ ] force overwrite if exists
-[ ] better UI
-[ ] allow configuration of templates (passing helpers)
-[ ] compile to supported js versions
-[ ] a golang version
+- [x] read config from package.json, "gen"
+- [x] ~force overwrite if exists~ warn if exists
+- [ ] better UI
+- [x] allow configuration of templates (passing helpers)
+- [ ] compile to supported js versions
+- [ ] a golang version
