@@ -5,13 +5,13 @@ import path from "path";
 
 import handlebars from "./template.js";
 import { createFolder, folderName, open, load, ext } from "./file";
-import { mergeObject, isObject, toObject } from "./object.js";
 
 const UTF8 = { encoding: "utf8" };
 
 const FileStatus = {
-  CREATED: chalk.green("(created)"),
-  EXISTS: chalk.red("(exists)")
+  SKIP: "skip",
+  CREATED: "created",
+  EXISTS: "exists"
 };
 
 export const gen = async (options, type, name) => {
@@ -29,54 +29,54 @@ export const gen = async (options, type, name) => {
     default:
   }
 
-  const command = config[type];
-  if (!command)
-    throw new Error(`Command "${type} is not specified in the ${configPath}"`);
+  const { version, actions } = config;
+  const action = actions.find(action => action.name === type);
+  if (!action)
+    throw new Error(`Action "${type} is not specified in the ${configPath}"`);
 
-  const { prompts, actions, environment } = command;
+  const { prompts, templates, environment } = action;
 
   const answers = prompts ? await inquirer.prompt(prompts) : {};
   const envvars = parseEnvironment(environment);
+  const status = {};
 
-  const templateStatus = {};
-  const destinationStatus = {};
-
-  for (const action of actions) {
+  for (const template of templates) {
     const initialData = {
       name,
       type,
       ...answers,
       ...envvars
     };
-    const variables = parseVariables(handlebars, initialData, action.variables);
+    const variables = parseVariables(
+      handlebars,
+      initialData,
+      template.variables
+    );
     const data = {
       ...initialData,
       ...variables
     };
 
-    let template;
+    let source;
     let destination;
     let content = "";
 
     // Read from template and write to destination.
-    const templatePath = handlebars.compile(action.template)(data);
-    const destinationPath = handlebars.compile(action.destination)(data);
+    const [sourcePath, destinationPath] = handlebars
+      .compile(template.path)(data)
+      .split(path.delimiter);
 
     try {
-      await createFolder(folderName(templatePath));
-      template = await open(templatePath, "a+");
-      content = await template.readFile(UTF8);
-      templateStatus[templatePath] = content.length
-        ? FileStatus.CREATED
-        : FileStatus.EXISTS;
+      source = await open(sourcePath, "a+");
+      content = await source.readFile(UTF8);
     } catch (error) {
-      templateStatus[templatePath] = FileStatus.EXISTS;
+      status[sourcePath] = error.message;
     } finally {
-      template?.close();
+      source?.close();
     }
 
     if (!content.trim().length) {
-      console.log(chalk.red(`Skipping template: ${templatePath} is empty`));
+      status[destinationPath] = `template is empty: ${sourcePath}`;
       continue;
     }
 
@@ -91,32 +91,18 @@ export const gen = async (options, type, name) => {
         destination = await open(destinationPath, "wx+");
         await destination.writeFile(handlebars.compile(content)(data), UTF8);
 
-        destinationStatus[destinationPath] = FileStatus.CREATED;
+        status[destinationPath] = FileStatus.CREATED;
       } catch (error) {
-        destinationStatus[destinationPath] = FileStatus.EXISTS;
+        status[destinationPath] =
+          error.code === "EEXIST" ? `file exists` : error.message;
       } finally {
         destination?.close();
       }
     }
   }
 
-  printTree(templateStatus, "Generated templates");
-  printTree(destinationStatus, "Generated codes");
+  console.table(status);
 };
-
-function printTree(obj = {}, msg = "") {
-  if (!isObject(obj)) return;
-  if (!Object.keys(obj).length) return;
-
-  let tree = {};
-  for (const key in obj) {
-    const paths = key.split(path.sep);
-    const status = obj[key];
-    tree = mergeObject(tree, toObject(paths.concat(status)));
-  }
-  console.log(chalk.blue(msg));
-  console.log(treeify.asTree(tree, true));
-}
 
 export async function createConfig() {
   const config = require("../config.sample.json5");

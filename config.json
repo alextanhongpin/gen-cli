@@ -1,0 +1,58 @@
+{
+  "version": "0.0.1",
+  "actions": [
+    {
+      "name": "my_controller",
+      "description": "Generates a controller",
+      "prompts": [
+        {
+          "type": "input",
+          "name": "name",
+          "message": "Enter a name"
+        },
+        {
+          "type": "password",
+          "name": "password",
+          "message": "Enter a password"
+        }
+      ],
+      "templates": [
+        {
+          "description": "Create controller",
+          "template": "templates/{{type}}/index.js",
+          "destination": "{{kebabCase name}}/{{type}}/index.js"
+        },
+        {
+          "description": "Create controller",
+          "template": "templates/{{type}}/index.spec.js",
+          "destination": "{{kebabCase name}}/{{type}}/index.spec.js"
+        }
+      ]
+    },
+    {
+      "name": "my_service",
+      "description": "creates a service and service test template",
+      "environment": {
+        "pluralName": "PLURAL",
+        "singularName": "SINGULAR"
+      },
+      "templates": [
+        {
+          "description": "Create a service",
+          "path": "templates/{{type}}.hbs:{{kebabCase name}}/service/index.ts",
+          "variables": {
+            "className": "{{pascalCase name}}",
+            "classRepository": "{{pascalCase name}}Repository",
+            "repository": "{{camelCase name}}Repository",
+            "items": "{{pluralName}}",
+            "item": "{{singularName}}"
+          }
+        },
+        {
+          "description": "Create a service test",
+          "path": "templates/{{type}}.spec.hbs:{{kebabCase name}}/service/index.spec.ts"
+        }
+      ]
+    }
+  ]
+}

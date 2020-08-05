@@ -46,9 +46,11 @@ program
         )
       );
     } catch (error) {
-      error.code === "EEXIST"
-        ? console.log(chalk.red("config.json already exists"))
-        : console.log(chalk.red(error.message));
+      console.log(
+        chalk.red(
+          error.code === "EEXIST" ? "config.json already exists" : error.message
+        )
+      );
     }
   });
 
